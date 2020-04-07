@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>录入信息页面</title>
+    <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+    <script>
+        $(function () {
+            var date = new Date();
+            var time = date.getFullYear() +'-'+ ('0'+ (date.getMonth() + 1)).slice(-2) +'-'+ ('0' + date.getDate()).slice(-2);
+            document.getElementById('date').value = time;
+            document.getElementById('date').setAttribute('max', time);
+            $("#submit").click(function () {
+                $.post("./submitServlet" , $("#submitForm").serialize() , function () {
+                });
+            });
+            $("#reset").click(function () {
+                location.href = "./ScanInfoPage.html";
+            });
+        });
+    </script>
+</head>
+<body style="text-align: center">
+    <h3>学生信息录入</h3>
+    <form id="submitForm">
+        学号:<input id="id" type="text" name="id"><br>
+        姓名:<input id="name" type="text" name="name"><br>
+        生日:<input id="date" type="date" name="date"><br>
+        性别:<input id="male" name="sex" checked="checked" type="radio" value="男">男
+             <input id="female" name="sex" type="radio" value="女">女<br>
+        体育爱好:
+        <input id="hobby1" name="hobby" type="checkbox" value="篮球">篮球
+        <input id="hobby2" name="hobby" type="checkbox" value="散步">散步
+        <input id="hobby3" name="hobby" type="checkbox" value="游泳">游泳<br>
+    </form>
+    <button id="submit">提交</button>&nbsp;
+    <button id="reset">重置</button>
+</body>
+</html>
