@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>录入信息页面</title>
+    <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+    <script>
+        $(function () {
+            var date = new Date();
+            var time = date.getFullYear() +'-'+ ('0'+ (date.getMonth() + 1)).slice(-2) +'-'+ ('0' + date.getDate()).slice(-2);
+            document.getElementById('date').value = time;
+            document.getElementById('date').setAttribute('max', time);
+            $("#reset").click(function () {
+                location.href = "./ScanInfoPage.html";
+            });
+        });
+    </script>
+</head>
+<body style="text-align: center">
+    <h3>学生信息录入</h3>
+    <!--<form method="post" action="./method1Servlet" id="submitForm">-->
+    <form method="post" action="./method2_1Servlet" id="submitForm">
+        学号:<input type="text" name="id"><br>
+        姓名:<input type="text" name="name"><br>
+        生日:<input id="date" type="date" name="date"><br>
+        性别:<input name="sex" checked="checked" type="radio" value="男">男
+        <input name="sex" type="radio" value="女">女<br>
+        体育爱好:
+        <input name="hobby" type="checkbox" value="篮球">篮球
+        <input name="hobby" type="checkbox" value="散步">散步
+        <input name="hobby" type="checkbox" value="游泳">游泳<br>
+        <input type="submit" id="submit">
+        <button id="reset">重置</button>
+    </form>
+</body>
+</html>
