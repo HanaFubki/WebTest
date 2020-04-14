@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户首页</title>
+    <script type="text/javascript" src="js/jquery-2.1.0.min.js"></script>
+    <script>
+        $(function () {
+            $.get("./loginJudServlet" , {} , function (backData) {
+                if(backData.flag){
+                    $("#user_name").html(backData.msg);
+                }else {
+                    location.href = "./WebTest2.html";
+                }
+            });
+        });
+    </script>
+</head>
+<body style="text-align: center">
+    <h2>登录保护页面</h2>
+    <h4>欢迎<span id="user_name"></span>访问本系统，点击【<a href="./logoutServlet">注销</a>】</h4>
+    <br>本页是受信息保护的页面，仅在您输入了正确的用户名和密码后才可以访问到本页信息。
+    <br>如果你在没有登录或者注销后看到了本页信息，说明在下的程序出现了错误漏洞。
+</body>
+</html>
