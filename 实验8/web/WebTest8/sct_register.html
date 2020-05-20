@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCT系统注册页</title>
+    <script src="../js/jquery-2.1.0.min.js" type="text/javascript"></script>
+    <script>
+        $(function () {
+            $("#stu_sub").click(function () {
+                $(".student_part").fadeIn(0);
+                $(".teacher_part").fadeOut(0);
+                $("#stu_sub").css("font-weight" , "bolder");
+                $("#tea_sub").css("font-weight" , "");
+            });
+            $("#tea_sub").click(function () {
+                $(".student_part").fadeOut(0);
+                $(".teacher_part").fadeIn(0);
+                $("#stu_sub").css("font-weight" , "");
+                $("#tea_sub").css("font-weight" , "bolder");
+            });
+            $("#student_btn").click(function () {
+                $.post("./stuRegisterServlet" , $("#student_form").serialize() , function (backData) {
+                    if(backData.flag){
+                        location.href = "./sct_login.html";
+                    }else{
+                        alert("注册失败，该电话号已被注册");
+                    }
+                });
+            });
+            $("#teacher_btn").click(function () {
+                $.post("./teaRegisterServlet" , $("#teacher_form").serialize() , function (backData) {
+                    if(backData.flag){
+                        location.href = "./sct_login.html";
+                    }else{
+                        alert("注册失败，该电话号已被注册");
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body style="text-align: center;">
+    <div style="margin-top: 150px;">
+        <button id="stu_sub" style="font-size : 20px;font-weight: bolder;background-color: white;border: white">学生注册</button>
+        <button id="tea_sub" style="font-size : 20px;background-color: white;border: white">教师注册</button><br><br>
+        <div class="student_part">
+            <form id="student_form">
+                学生姓名 : <input type="text" name="sname"><br>
+                登录密码 : <input type="password" name="spassword"><br>
+                您的年级 :
+                <select name="sgrade">
+                    <option value="1">大一</option>
+                    <option value="2">大二</option>
+                    <option value="3">大三</option>
+                    <option value="4">大四</option>
+                </select><br>
+                电话号码 : <input type="text" name="stel"><br><br>
+            </form>
+            <button id="student_btn">注册</button>
+        </div>
+        <div class="teacher_part" style="display: none">
+            <form id="teacher_form">
+                教师姓名 : <input type="text" name="tname"><br>
+                登录密码 : <input type="password" name="tpassword"><br>
+                电话号码 : <input type="text" name="ttel"><br><br>
+            </form>
+            <button id="teacher_btn">注册</button>
+        </div>
+    </div>
+</body>
+</html>

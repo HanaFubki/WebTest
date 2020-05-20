@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCT系统教师操作页</title>
+    <script src="../js/jquery-2.1.0.min.js" type="text/javascript"></script>
+    <script>
+        $(function () {
+            $.get("./getTeaServlet" , {} , function (backData) {
+                $("#tea_name").val(backData.data.tname);
+                $("#tea_password").val(backData.data.tpassword);
+                $("#tea_tel").val(backData.data.ttel);
+                $("#tea_id").html(backData.data.tid);
+            });
+            $("#logout").click(function () {
+                $.post("./teaLogoutServlet" , {} , function () {
+                    location.href = "./sct_login.html";
+                });
+            });
+            $("#updateTeaInfoBtn").click(function () {
+                $.post("./updateTeaInfoServlet" , $("#update_teacher_info_form").serialize() , function (backData) {
+                    if(backData.flag){
+                        alert("更新成功")
+                        location.href = "./sct_teacher.html";
+                    }else{
+                        alert("出现信息异常");
+                    }
+                });
+            });
+            $("#insert_class_btn").click(function () {
+                $.post("./insertClassServlet" , $("#insert_class_form").serialize() , function (backData) {
+                    if(backData.flag){
+                        $("#info").html("更新成功!");
+                    }else{
+                        alert("出现信息异常");
+                    }
+                });
+            });
+            $("#find_all_course_btn").click(function () {
+                $.get("./findAllCourseServlet" , {startCount : 0} , function (backData) {
+                    $("#info").html(backData.msg);
+                });
+            });
+            find_all_course = function(startCount){
+                $.get("./findAllCourseServlet" , {startCount : startCount} , function (backData) {
+                    $("#info").html(backData.msg);
+                });
+            }
+            $("#find_myself_create_btn").click(function () {
+                $.get("./findTeacherCreateServlet" , {startCount : 0} , function (backData) {
+                    $("#info").html(backData.msg);
+                });
+            });
+            find_myself_create = function(startCount){
+                $.get("./findTeacherCreateServlet" , {startCount : startCount} , function (backData) {
+                    $("#info").html(backData.msg);
+                });
+            }
+            deleteClass = function (cid) {
+                if(!confirm("您确定要删除课程id为" + cid + "的课程吗？")){
+                    window.event.returnValue = false;
+                }else{
+                    $.post("./deleteClassServlet" , {cid : cid} , function () {
+                        alert("删除成功!");
+                        find_all_course(0);
+                    });
+                }
+            }
+            $("#updateBtn").click(function () {
+                var cid = document.getElementById("course_id").innerText;
+                $.post("./updateSubmitServlet?cid=" + cid , $("#update_class_form").serialize() , function (backData) {
+                    $("#updateBtn").html("修改成功");
+                    $("#updateBtn").css("color" , "green");
+                    $("#updateBtn").css("pointer-events" , "none");
+                });
+            });
+            $("#exitBtn").click(function () {
+                $("#update").fadeOut(500);
+                find_all_course(0);
+            });
+            updateClass = function (cid){
+                $.post("./updateClassServlet" , {cid : cid} , function (backData) {
+                    $("#update").fadeIn(500);
+                    $("#course_id").html(backData.data.cid);
+                    $("#course_name").val(backData.data.cname);
+                    $("#course_count").val(backData.data.countLimit);
+                    var grade = backData.data.gradeLimit + "";
+                    $("#course_grade").find("option").each(function(){
+                        if($(this).val() == grade)	{
+                            $(this).attr("selected",true);
+                        }
+                    });
+                });
+            }
+            update_submit = function(cid){
+                $.post("./updateSubmitServlet" , $("#update_class_form").serialize() , function () {
+                    alert("更新成功");
+                    location.href = "./sct_teacher.html";
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <div style="width: 20% ; float: left;margin: 10%">
+            - 个人信息 -<br>
+            <hr>
+            教师id : <span id="tea_id"></span> <br>
+            <form id="update_teacher_info_form">
+                教师姓名 : <input id="tea_name" type="text" name="tname"><br>
+                登录密码 : <input id="tea_password" type="password" name="tpassword"><br>
+                电话号码 : <input id="tea_tel" type="text" name="ttel"><br>
+            </form>
+            <button id="updateTeaInfoBtn">修改自己信息</button>&nbsp;&nbsp;<button id="logout">注销</button><br>
+        </div>
+        <div style="width: 40% ; float: left;margin: 10%">
+            - 选课操作 -<br>
+            <hr>
+            <form id="insert_class_form">
+                课程名 : <input type="text" name="cname"><br>
+                班级最大人数 : <input type="text" name="countLimit"><br>
+                年级限制 :
+                <select name="gradeLimit">
+                    <option value="1">大一</option>
+                    <option value="2">大二</option>
+                    <option value="3">大三</option>
+                    <option value="4">大四</option>
+                </select><br>
+            </form>
+            <button id="insert_class_btn">新建一门选课</button>&nbsp;
+            <button id="find_all_course_btn">查看全部在选课程</button>&nbsp;
+            <button id="find_myself_create_btn">查看自己创建的课程</button><br>
+            <hr>
+            <div id="info">
+            </div>
+        </div>
+        <div id="update" style="display: none;left: 30%;top:20%;position:fixed;width: 40%;height: 300px;border: 1px solid #999999;background-color:#DDDDDD;opacity: 0.9;text-align: center;line-height: 40px;padding-top: 25px;">
+            <h2>课程相关信息修改</h2>
+            当前课程号 : <span id="course_id"></span>
+            <form id="update_class_form">
+                课程名 : <input id="course_name" type="text" name="cname"><br>
+                班级最大人数 : <input id="course_count" type="text" name="countLimit"><br>
+                年级限制 :
+                <select name="gradeLimit" id="course_grade">
+                    <option value="1">大一</option>
+                    <option value="2">大二</option>
+                    <option value="3">大三</option>
+                    <option value="4">大四</option>
+                </select><br>
+            </form>
+            <button type="button" id="updateBtn">点击修改</button>
+            <button type="button" id="exitBtn">点击关闭</button><br>
+        </div>
+    </div>
+</body>
+</html>

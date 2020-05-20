@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SCT系统学生操作页</title>
+    <script src="../js/jquery-2.1.0.min.js" type="text/javascript"></script>
+    <script>
+        $(function () {
+            $.get("./getStuServlet" , {} , function (backData) {
+                $("#stu_name").val(backData.data.sname);
+                $("#stu_password").val(backData.data.spassword);
+                $("#stu_tel").val(backData.data.stel);
+                $("#stu_id").html(backData.data.sid);
+                var grade = backData.data.sgrade + "";
+                $("#stu_grade").find("option").each(function(){
+                    if($(this).val() == grade)	{
+                        $(this).attr("selected",true);
+                    }
+                });
+            });
+            $("#logout").click(function () {
+                $.post("./stuLogoutServlet" , {} , function () {
+                    location.href = "./sct_login.html";
+                });
+            });
+            $("#updateStuInfoBtn").click(function () {
+                $.post("./updateStuInfoServlet" , $("#update_student_info_form").serialize() , function (backData) {
+                    if(backData.flag){
+                        alert("更新成功")
+                        location.href = "./sct_student.html";
+                    }else{
+                        alert("出现信息异常");
+                    }
+                });
+            })
+            $("#stuInClassBtn").click(function () {
+                $.post("./getStuSelectCourseServlet" , {startCount : 0} , function (backData) {
+                    $("#info").html(backData.msg);
+                });
+            });
+            stuInClass = function(startCount){
+                $.post("./getStuSelectCourseServlet" , {startCount : startCount} , function (backData) {
+                    $("#info").html(backData.msg);
+                });
+            }
+            $("#selectCanClassBtn").click(function () {
+                $.post("./selectCanClassServlet" , {startCount : 0} , function (backData) {
+                    $("#info").html(backData.msg);
+                });
+            })
+            selectCanClass = function(startCount){
+                $.post("./selectCanClassServlet" , {startCount : startCount} , function (backData) {
+                    $("#info").html(backData.msg);
+                });
+            }
+            joinClass = function (cid) {
+                $.post("./joinClassServlet" , {cid : cid} , function (backData) {
+                    if(backData.flag){
+                        alert("加入课堂成功");
+                        stuInClass(0);
+                    }else{
+                        alert("发生未知错误");
+                    }
+                });
+            }
+            exitClass = function (cid) {
+                $.post("./stuExitServlet" , {cid : cid} , function (backData) {
+                    alert("退出课堂成功");
+                    stuInClass(0);
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <div style="width: 20% ; float: left;margin: 10%">
+            - 个人信息 -<br>
+            <hr>
+            学生id : <span id="stu_id"></span> <br>
+            <form id="update_student_info_form">
+                学生姓名 : <input id="stu_name" type="text" name="sname"><br>
+                登录密码 : <input id="stu_password" type="password" name="spassword"><br>
+                您的年级 :
+                <select id="stu_grade" name="sgrade">
+                    <option value="1">大一</option>
+                    <option value="2">大二</option>
+                    <option value="3">大三</option>
+                    <option value="4">大四</option>
+                </select><br>
+                电话号码 : <input id="stu_tel" type="text" name="stel"><br>
+            </form>
+            <button id="updateStuInfoBtn">修改自己信息</button>&nbsp;&nbsp;<button id="logout">注销</button><br>
+        </div>
+        <div style="width: 40% ; float: left;margin: 10%">
+            - 选课操作 -<br>
+            <hr>
+            <button id="selectCanClassBtn">查看全部可选课程</button>
+            <button id="stuInClassBtn">查看自己已选的课程</button><br>
+            <div id="info">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
